@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grabadora de Audio</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎤 Grabadora de Audio</h1>
+    
+    <div class="controls">
+      <button id="btn-grabar" class="btn btn-record">⏺ Grabar</button>
+      <button id="btn-pausar" class="btn btn-pause" disabled>⏸ Pausar</button>
+      <button id="btn-detener" class="btn btn-stop" disabled>⏹ Detener</button>
+      <button id="btn-reiniciar" class="btn btn-reset">🔄 Reiniciar</button>
+    </div>
+
+    <div class="controls">
+      <button id="btn-play" class="btn btn-play" disabled>▶ Play</button>
+      <button id="btn-pause-play" class="btn btn-pause" disabled>⏸ Pause</button>
+      <button id="btn-stop-play" class="btn btn-stop" disabled>⏹ Stop</button>
+    </div>
+
+    <div class="controls">
+      <button id="btn-descargar" class="btn btn-download" disabled>⬇ Descargar</button>
+      <label class="btn btn-upload">
+        📂 Cargar Audio
+        <input type="file" id="input-cargar" accept="audio/*" hidden>
+      </label>
+    </div>
+
+    <div class="status">
+      <span id="estado">Listo</span>
+      <span id="timer">00:00</span>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
