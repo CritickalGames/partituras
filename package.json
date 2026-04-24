@@ -9,5 +9,10 @@
   },
   "devDependencies": {
     "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "@tonaljs/tonal": "^4.10.0",
+    "pitchfinder": "^2.3.4",
+    "vexflow": "^5.0.0"
   }
 }

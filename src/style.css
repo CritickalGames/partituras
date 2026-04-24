@@ -1,55 +1,178 @@
+:root {
+  --bg-app: #121218;
+  --bg-panel: #1e1e26;
+  --text-main: #e0e0e0;
+  --text-muted: #888;
+  
+  --accent-green: #4caf50; /* Nota / Play */
+  --accent-blue: #2196f3;  /* Acorde */
+  --accent-red: #f44336;   /* Grabar */
+  --accent-secondary: #607d8b; /* Reiniciar / Stop */
+  --accent-upload: #06b6d4;    /* Cargar Archivo */
+  
+  --bar-height: 80px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: system-ui, sans-serif;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.container {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+/* --- BARRA SUPERIOR (CONTROLES) --- */
+.top-controls-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 500px;
-  text-align: center;
+  height: var(--bar-height);
+  background: rgba(20, 20, 28, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
-.controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0;
+.controls-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+/* Botones */
+.control-group.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn {
-  padding: 12px;
+  padding: 8px 14px;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: white;
-  transition: opacity 0.2s;
 }
 
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-record { background: #ef4444; }
-.btn-pause { background: #f59e0b; }
-.btn-stop { background: #6b7280; }
-.btn-reset { background: #3b82f6; }
-.btn-play { background: #22c55e; }
-.btn-download { background: #8b5cf6; }
-.btn-upload { background: #06b6d4; display: flex; justify-content: center; align-items: center; }
+.btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.2); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-.status {
+.btn-record { background: var(--accent-red); }
+.btn-pause { background: #ff9800; }
+.btn-stop { background: var(--accent-secondary); }
+.btn-play { background: var(--accent-green); }
+.btn-download { background: #9c27b0; }
+.btn-secondary { background: #455a64; }
+.btn-upload { background: var(--accent-upload); } /* ✅ Nuevo color para cargar */
+
+/* Cluster de Información (Derecha) */
+.info-cluster {
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: #f3f4f6;
-  border-radius: 8px;
-  margin-top: 20px;
-  font-family: monospace;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 5px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  position: relative;
+}
+
+/* Separadores verticales entre items de info */
+.info-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.label-mini {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.value-mono {
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.value-huge {
+  font-family: 'Courier New', monospace;
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Colores Dinámicos Simulados */
+.nd-note { color: var(--accent-green); text-shadow: 0 0 10px rgba(76, 175, 80, 0.6); }
+.nd-chord { color: var(--accent-blue); text-shadow: 0 0 10px rgba(33, 150, 243, 0.6); }
+
+/* --- VISUALIZADORES --- */
+.main-content {
+  margin-top: var(--bar-height);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  overflow-y: auto;
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.canvas-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.dark-bg { background: #000; border: 1px solid #333; }
+.light-bg { background: #fdfdfd; border: 1px solid #ccc; }
+
+canvas { display: block; width: 100%; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .controls-container { flex-direction: column; gap: 15px; padding: 10px; }
+  .top-controls-bar { height: auto; position: relative; }
+  .main-content { margin-top: 0; }
+  .info-cluster { width: 100%; justify-content: space-around; }
+  .control-group.actions { justify-content: center; }
 }

@@ -3,39 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grabadora de Audio</title>
+  <title>Detector de Audio - Layout Final</title>
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🎤 Grabadora de Audio</h1>
+
+  <!-- 1. BARRA SUPERIOR: CONTROLES + INFO EN TIEMPO REAL -->
+  <header class="top-controls-bar">
+    <div class="controls-container">
+      
+      <!-- Grupo Izquierdo: Botones de Acción -->
+      <div class="control-group actions">
+        <button id="btn-grabar" class="btn btn-record">🔴 Grabar</button>
+        <button id="btn-pausar" class="btn btn-pause" disabled>⏸ Pausar</button>
+        <button id="btn-detener" class="btn btn-stop" disabled>⏹ Detener</button>
+        <button id="btn-play" class="btn btn-play" disabled>▶ Play</button>
+        <button id="btn-descargar" class="btn btn-download" disabled>⬇ Descargar</button>
+        <button id="btn-cargar" class="btn btn-upload">📂 Cargar</button>
+        <input type="file" id="input-file-audio" accept="audio/*" hidden>
+        <button id="btn-reiniciar" class="btn btn-secondary">🔄 Reiniciar</button>
+      </div>
+
+      <!-- Grupo Derecho: Info en Tiempo Real (Timer + Nota + Acorde) -->
+      <div class="info-cluster">
+        
+        <!-- Cronómetro -->
+        <div class="info-item timer-box">
+          <span class="label-mini">Tiempo</span>
+          <span id="timer" class="value-mono">00:00</span>
+        </div>
+
+        <!-- Nota Base -->
+        <div class="info-item note-box">
+          <span class="label-mini">Nota</span>
+          <span id="nota-base" class="value-huge nd-note">--</span>
+        </div>
+
+        <!-- Acorde -->
+        <div class="info-item chord-box">
+          <span class="label-mini">Acorde</span>
+          <span id="acorde-detectado" class="value-huge nd-chord">--</span>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. CONTENIDO PRINCIPAL: VISUALIZADORES -->
+  <main class="main-content">
     
-    <div class="controls">
-      <button id="btn-grabar" class="btn btn-record">⏺ Grabar</button>
-      <button id="btn-pausar" class="btn btn-pause" disabled>⏸ Pausar</button>
-      <button id="btn-detener" class="btn btn-stop" disabled>⏹ Detener</button>
-      <button id="btn-reiniciar" class="btn btn-reset">🔄 Reiniciar</button>
-    </div>
+    <!-- Espectro de Frecuencias -->
+    <section class="visualizer-section spectrum">
+      <div class="canvas-container dark-bg">
+        <canvas id="visualizador-espectro" width="800" height="200"></canvas>
+      </div>
+    </section>
 
-    <div class="controls">
-      <button id="btn-play" class="btn btn-play" disabled>▶ Play</button>
-      <button id="btn-pause-play" class="btn btn-pause" disabled>⏸ Pause</button>
-      <button id="btn-stop-play" class="btn btn-stop" disabled>⏹ Stop</button>
-    </div>
+    <!-- Partitura (Doble Clave) -->
+    <section class="visualizer-section sheet-music">
+      <div class="canvas-container light-bg">
+        <canvas id="visualizador-partitura" width="800" height="250"></canvas>
+      </div>
+    </section>
 
-    <div class="controls">
-      <button id="btn-descargar" class="btn btn-download" disabled>⬇ Descargar</button>
-      <label class="btn btn-upload">
-        📂 Cargar Audio
-        <input type="file" id="input-cargar" accept="audio/*" hidden>
-      </label>
-    </div>
-
-    <div class="status">
-      <span id="estado">Listo</span>
-      <span id="timer">00:00</span>
-    </div>
-  </div>
+  </main>
 
   <script type="module" src="/src/main.js"></script>
 </body>
