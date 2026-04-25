@@ -8,58 +8,68 @@
 </head>
 <body>
 
-  <!-- 1. BARRA SUPERIOR: CONTROLES + INFO EN TIEMPO REAL -->
+  <!-- 1. BARRA SUPERIOR: CONTROLES + INFO -->
   <header class="top-controls-bar">
     <div class="controls-container">
       
       <!-- Grupo Izquierdo: Botones de Acción -->
       <div class="control-group actions">
+        <!-- Grabación -->
         <button id="btn-grabar" class="btn btn-record">🔴 Grabar</button>
-        <button id="btn-pausar" class="btn btn-pause" disabled>⏸ Pausar</button>
+        <button id="btn-pause-rec" class="btn btn-pause-rec" disabled>⏸ Pausar</button>
         <button id="btn-detener" class="btn btn-stop" disabled>⏹ Detener</button>
+        
+        <!-- Separador -->
+        <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); margin: 0 10px;"></div>
+
+        <!-- Reproducción Manual -->
         <button id="btn-play" class="btn btn-play" disabled>▶ Play</button>
+        <button id="btn-stop-play" class="btn btn-stop" disabled>⏹ Stop</button>
+        
+        <!-- Utilidades -->
         <button id="btn-descargar" class="btn btn-download" disabled>⬇ Descargar</button>
         <button id="btn-cargar" class="btn btn-upload">📂 Cargar</button>
         <input type="file" id="input-file-audio" accept="audio/*" hidden>
         <button id="btn-reiniciar" class="btn btn-secondary">🔄 Reiniciar</button>
       </div>
 
-      <!-- Grupo Derecho: Info en Tiempo Real (Timer + Nota + Acorde) -->
+      <!-- Grupo Derecho: Info -->
       <div class="info-cluster">
-        
-        <!-- Cronómetro -->
         <div class="info-item timer-box">
           <span class="label-mini">Tiempo</span>
           <span id="timer" class="value-mono">00:00</span>
         </div>
-
-        <!-- Nota Base -->
         <div class="info-item note-box">
           <span class="label-mini">Nota</span>
           <span id="nota-base" class="value-huge nd-note">--</span>
         </div>
-
-        <!-- Acorde -->
         <div class="info-item chord-box">
           <span class="label-mini">Acorde</span>
           <span id="acorde-detectado" class="value-huge nd-chord">--</span>
         </div>
-
       </div>
     </div>
   </header>
 
-  <!-- 2. CONTENIDO PRINCIPAL: VISUALIZADORES -->
+  <!-- 2. REPRODUCTOR DE AUDIO (Debajo de la barra) -->
+  <section class="audio-player-bar">
+    <div class="player-container">
+      <span class="player-label">Reproductor:</span>
+      <audio id="audio-player" controls></audio>
+    </div>
+  </section>
+
+  <!-- 3. CONTENIDO PRINCIPAL: VISUALIZADORES -->
   <main class="main-content">
     
-    <!-- Espectro de Frecuencias -->
+    <!-- Espectro -->
     <section class="visualizer-section spectrum">
       <div class="canvas-container dark-bg">
         <canvas id="visualizador-espectro" width="800" height="200"></canvas>
       </div>
     </section>
 
-    <!-- Partitura (Doble Clave) -->
+    <!-- Partitura -->
     <section class="visualizer-section sheet-music">
       <div class="canvas-container light-bg">
         <canvas id="visualizador-partitura" width="800" height="250"></canvas>

@@ -4,11 +4,10 @@
   --text-main: #e0e0e0;
   --text-muted: #888;
   
-  --accent-green: #4caf50; /* Nota / Play */
-  --accent-blue: #2196f3;  /* Acorde */
-  --accent-red: #f44336;   /* Grabar */
-  --accent-secondary: #607d8b; /* Reiniciar / Stop */
-  --accent-upload: #06b6d4;    /* Cargar Archivo */
+  --accent-green: #4caf50;
+  --accent-blue: #2196f3;
+  --accent-red: #f44336;
+  --accent-orange: #ff9800; /* Para pausa grabación */
   
   --bar-height: 80px;
 }
@@ -25,7 +24,7 @@ body {
   overflow: hidden;
 }
 
-/* --- BARRA SUPERIOR (CONTROLES) --- */
+/* --- BARRA SUPERIOR (HOVER) --- */
 .top-controls-bar {
   position: fixed;
   top: 0;
@@ -51,7 +50,6 @@ body {
   padding: 0 20px;
 }
 
-/* Botones */
 .control-group.actions {
   display: flex;
   gap: 8px;
@@ -75,14 +73,14 @@ body {
 .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
 .btn-record { background: var(--accent-red); }
-.btn-pause { background: #ff9800; }
-.btn-stop { background: var(--accent-secondary); }
+.btn-pause-rec { background: var(--accent-orange); } /* Naranja para distinguir de pausa reproducción */
+.btn-stop { background: #607d8b; }
 .btn-play { background: var(--accent-green); }
 .btn-download { background: #9c27b0; }
+.btn-upload { background: #06b6d4; }
 .btn-secondary { background: #455a64; }
-.btn-upload { background: var(--accent-upload); } /* ✅ Nuevo color para cargar */
 
-/* Cluster de Información (Derecha) */
+/* Info Cluster */
 .info-cluster {
   display: flex;
   align-items: center;
@@ -97,12 +95,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-width: 60px;
   position: relative;
 }
 
-/* Separadores verticales entre items de info */
 .info-item:not(:last-child)::after {
   content: '';
   position: absolute;
@@ -122,14 +118,14 @@ body {
 }
 
 .value-mono {
-  font-family: 'Courier New', monospace;
+  font-family: monospace;
   font-size: 1.2rem;
   font-weight: bold;
   color: #fff;
 }
 
 .value-huge {
-  font-family: 'Courier New', monospace;
+  font-family: monospace;
   font-size: 1.8rem;
   font-weight: 900;
   line-height: 1;
@@ -137,13 +133,50 @@ body {
   text-align: center;
 }
 
-/* Colores Dinámicos Simulados */
 .nd-note { color: var(--accent-green); text-shadow: 0 0 10px rgba(76, 175, 80, 0.6); }
 .nd-chord { color: var(--accent-blue); text-shadow: 0 0 10px rgba(33, 150, 243, 0.6); }
 
-/* --- VISUALIZADORES --- */
+/* --- BARRA DE REPRODUCTOR (NUEVA) --- */
+.audio-player-bar {
+  position: fixed;
+  top: var(--bar-height); /* Justo debajo de la barra principal */
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: rgba(30, 30, 38, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 20px;
+}
+
+.player-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+audio {
+  flex-grow: 1;
+  height: 32px;
+  filter: invert(1) hue-rotate(180deg); /* Modo oscuro */
+  border-radius: 16px;
+}
+
+/* --- MAIN CONTENT --- */
 .main-content {
-  margin-top: var(--bar-height);
+  margin-top: calc(var(--bar-height) + 50px); /* Compensar ambas barras fijas */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -172,6 +205,7 @@ canvas { display: block; width: 100%; }
 @media (max-width: 768px) {
   .controls-container { flex-direction: column; gap: 15px; padding: 10px; }
   .top-controls-bar { height: auto; position: relative; }
+  .audio-player-bar { position: relative; top: 0; height: auto; padding: 10px 0; }
   .main-content { margin-top: 0; }
   .info-cluster { width: 100%; justify-content: space-around; }
   .control-group.actions { justify-content: center; }
