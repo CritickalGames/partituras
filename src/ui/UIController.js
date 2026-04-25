@@ -1,153 +1,59 @@
+import { TimerManager } from './uicontroller/TimerManager.js';
+import { PlaybackUI } from './uicontroller/PlaybackUI.js';
+import { RecordingUI } from './uicontroller/RecordingUI.js';
+import { FilesUI } from './uicontroller/FilesUI.js';
+
 export class UIController {
   constructor() {
     this.els = {
       grabar: document.getElementById('btn-grabar'),
-      pausar: document.getElementById('btn-pausar'),
+      pauseRec: document.getElementById('btn-pause-rec'),
       detener: document.getElementById('btn-detener'),
       descargar: document.getElementById('btn-descargar'),
       cargar: document.getElementById('btn-cargar'),
-      inputFile: document.getElementById('input-file-audio'),
       play: document.getElementById('btn-play'),
+      stopPlay: document.getElementById('btn-stop-play'),
       reiniciar: document.getElementById('btn-reiniciar'),
-      timer: document.getElementById('timer')
+      timer: document.getElementById('timer'),
+      audioPlayer: document.getElementById('audio-player')
     };
 
-    this.timerInterval = null;
-    this.startTime = 0;
-    this.elapsedTime = 0; // Tiempo acumulado en ms
+    this.timerMgr = new TimerManager(this.els.timer);
+    
+    this.playbackUI = new PlaybackUI({
+      play: this.els.play,
+      stopPlay: this.els.stopPlay,
+      audioPlayer: this.els.audioPlayer
+    });
+    
+    this.recordingUI = new RecordingUI({
+      grabar: this.els.grabar,
+      pauseRec: this.els.pauseRec,
+      detener: this.els.detener,
+      descargar: this.els.descargar,
+      play: this.els.play,
+      stopPlay: this.els.stopPlay
+    }, this.timerMgr);
+
+    this.filesUI = new FilesUI({
+      cargar: this.els.cargar,
+      descargar: this.els.descargar,
+      reiniciar: this.els.reiniciar
+    });
   }
 
   initialize() {
-    this._bindEvents();
+    this.recordingUI.bindEvents(document);
+    this.filesUI.bindEvents(document); // ✅ Vinculado
+    this._bindPlaybackControls();
   }
 
-  _bindEvents() {
-    if (!this.els.grabar || !this.els.detener) return;
-
-    // 1. GRABAR
-    this.els.grabar.addEventListener('click', () => {
-      this._startTimer();
-      document.dispatchEvent(new CustomEvent('audio:start'));
-      
-      this._setRecordingState(true);
-    });
-
-    // 2. PAUSAR / REANUDAR
-    if (this.els.pausar) {
-      this.els.pausar.addEventListener('click', () => {
-        const isCurrentlyPaused = this.els.pausar.textContent.includes('Reanudar');
-
-        if (isCurrentlyPaused) {
-          // REANUDAR
-          this._resumeTimer();
-          this.els.pausar.textContent = '⏸ Pausar';
-          document.dispatchEvent(new CustomEvent('audio:resume'));
-        } else {
-          // PAUSAR
-          this._pauseTimer();
-          this.els.pausar.textContent = '▶ Reanudar';
-          document.dispatchEvent(new CustomEvent('audio:pause'));
-        }
-      });
-    }
-
-    // 3. DETENER
-    this.els.detener.addEventListener('click', () => {
-      this._stopTimer();
-      document.dispatchEvent(new CustomEvent('audio:stop'));
-      this._setRecordingState(false);
-    });
-
-    // 4. DESCARGAR
-    if (this.els.descargar) {
-      this.els.descargar.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent('audio:download'));
-      });
-    }
-
-    // 5. CARGAR
-    if (this.els.cargar && this.els.inputFile) {
-      this.els.cargar.addEventListener('click', () => this.els.inputFile.click());
-      this.els.inputFile.addEventListener('change', e => {
-        if (e.target.files[0]) {
-          document.dispatchEvent(new CustomEvent('audio:load', { detail: e.target.files[0] }));
-        }
-      });
-    }
-
-    // 6. PLAY
-    if (this.els.play) {
-      this.els.play.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent('audio:togglePlay'));
-      });
-    }
-
-    // 7. REINICIAR
-    if (this.els.reiniciar) {
-      this.els.reiniciar.addEventListener('click', () => location.reload());
-    }
+  _bindPlaybackControls() {
+    if (this.els.play) this.els.play.addEventListener('click', () => this.playbackUI.togglePlay());
+    if (this.els.stopPlay) this.els.stopPlay.addEventListener('click', () => this.playbackUI.stop());
   }
 
-  // --- Lógica del Cronómetro ---
-
-  _startTimer() {
-    this.elapsedTime = 0;
-    this.startTime = Date.now();
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    this.timerInterval = setInterval(() => this._updateTimerDisplay(), 100);
-  }
-
-  _pauseTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-    // Guardar cuánto tiempo ha pasado hasta ahora
-    this.elapsedTime += Date.now() - this.startTime;
-  }
-
-  _resumeTimer() {
-    if (!this.timerInterval) {
-      this.startTime = Date.now();
-      this.timerInterval = setInterval(() => this._updateTimerDisplay(), 100);
-    }
-  }
-
-  _stopTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-    this.els.timer.textContent = '00:00';
-    this.elapsedTime = 0;
-    this.startTime = 0;
-  }
-
-  _updateTimerDisplay() {
-    // Tiempo total = Tiempo acumulado antes de pausas + Tiempo actual desde el último start/resume
-    const now = Date.now();
-    const currentSession = now - this.startTime;
-    const totalMs = this.elapsedTime + currentSession;
-
-    const delta = Math.floor(totalMs / 1000);
-    const m = Math.floor(delta / 60).toString().padStart(2, '0');
-    const s = (delta % 60).toString().padStart(2, '0');
-    
-    if (this.els.timer) this.els.timer.textContent = `${m}:${s}`;
-  }
-
-  // --- Utilidad Visual ---
-  _setRecordingState(isRecording) {
-    this.els.grabar.disabled = isRecording;
-    
-    if (this.els.pausar) {
-      this.els.pausar.disabled = !isRecording;
-      if (!isRecording) this.els.pausar.textContent = '⏸ Pausar';
-    }
-    
-    this.els.detener.disabled = !isRecording;
-    
-    if (this.els.play) this.els.play.disabled = isRecording;
-    if (this.els.descargar) this.els.descargar.disabled = isRecording;
+  setAudioSource(url) {
+    this.playbackUI.loadSource(url);
   }
 }
